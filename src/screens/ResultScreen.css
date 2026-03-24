@@ -1,0 +1,84 @@
+.result-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 2rem;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.trophy {
+  font-size: 4rem;
+  animation: bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-12px); }
+}
+
+.result-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.result-sub {
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.result-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-left: 4px solid;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+.result-rank {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+  width: 24px;
+}
+
+.result-player-name {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+}
+
+.result-score {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  padding-top: 0.5rem;
+}

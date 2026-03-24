@@ -1,0 +1,149 @@
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: #111827;
+  color: #fff;
+  position: relative;
+}
+
+.game-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: rgba(0,0,0,0.3);
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.turn-indicator {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.deck-count {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* Card area */
+.card-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 1rem;
+  gap: 1rem;
+}
+
+.card-area-label {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.7);
+  margin: 0;
+  text-align: center;
+}
+
+.card-hint {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+}
+
+/* Timeline area */
+.timeline-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 0.5rem;
+}
+
+.timeline-label {
+  padding: 0.75rem 1.25rem 0;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+.timeline-count {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Footer */
+.game-footer {
+  padding: 1rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.result-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.result-banner.correct {
+  background: rgba(5, 196, 107, 0.15);
+  color: #05c46b;
+  border: 1px solid rgba(5, 196, 107, 0.3);
+}
+
+.result-banner.wrong {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+  border: 1px solid rgba(233, 69, 96, 0.3);
+}
+
+/* Scoreboard */
+.scoreboard {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  z-index: 10;
+  /* only visible when no footer open */
+}
+
+.game-footer ~ .scoreboard {
+  display: none;
+}
+
+.score-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.score-pill.active {
+  opacity: 1;
+}
+
+.score-name {
+  color: rgba(255,255,255,0.7);
+}
+
+.score-count {
+  font-weight: 700;
+}

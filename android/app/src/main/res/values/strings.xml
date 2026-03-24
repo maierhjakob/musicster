@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Musicster</string>
+    <string name="title_activity_main">Musicster</string>
+    <string name="package_name">com.musicster.app</string>
+    <string name="custom_url_scheme">com.musicster.app</string>
+</resources>
