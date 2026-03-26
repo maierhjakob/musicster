@@ -1,6 +1,12 @@
+import type { Song } from '../data/songs';
 import './SongCard.css';
 
-export default function SongCard({ song, revealed = false }) {
+interface SongCardProps {
+  song: Song | null;
+  revealed?: boolean;
+}
+
+export default function SongCard({ song, revealed = false }: SongCardProps) {
   return (
     <div className={`song-card ${revealed ? 'revealed' : ''}`}>
       <div className="song-card-inner">

@@ -10,9 +10,9 @@ export default function GameScreen() {
 
   const [dragging, setDragging] = useState(false);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
-  const [hoveredSlot, setHoveredSlot] = useState(null);
+  const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
 
-  function handlePointerDown(e) {
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (showYear) return;
     e.preventDefault();
     setDragging(true);
@@ -20,15 +20,42 @@ export default function GameScreen() {
     e.currentTarget.setPointerCapture(e.pointerId);
   }
 
-  function handlePointerMove(e) {
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
     if (!dragging) return;
     setDragPos({ x: e.clientX, y: e.clientY });
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
-    const slotEl = elements.find(el => el.dataset && el.dataset.slotIndex !== undefined);
-    setHoveredSlot(slotEl ? parseInt(slotEl.dataset.slotIndex) : null);
+    const cardEl = elements.find(
+      el => el instanceof HTMLElement && el.dataset.cardIndex !== undefined
+    ) as HTMLElement | undefined;
+    if (cardEl) {
+      const rect = cardEl.getBoundingClientRect();
+      const cardIndex = parseInt(cardEl.dataset.cardIndex!);
+      const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+      setHoveredSlot(isLeftHalf ? cardIndex : cardIndex + 1);
+    } else {
+      // In the gap between cards: resolve slot by x position within the timeline
+      const inTimeline = elements.some(
+        el => el instanceof HTMLElement && el.classList.contains('timeline')
+      );
+      if (inTimeline) {
+        const cardEls = Array.from(
+          document.querySelectorAll<HTMLElement>('[data-card-index]')
+        );
+        let slot = 0;
+        for (const c of cardEls) {
+          const rect = c.getBoundingClientRect();
+          if (e.clientX > rect.left + rect.width / 2) {
+            slot = parseInt(c.dataset.cardIndex!) + 1;
+          }
+        }
+        setHoveredSlot(slot);
+      } else {
+        setHoveredSlot(null);
+      }
+    }
   }
 
-  function handlePointerUp(e) {
+  function handlePointerUp() {
     if (!dragging) return;
     setDragging(false);
     if (hoveredSlot !== null) {
@@ -81,7 +108,7 @@ export default function GameScreen() {
           cards={timeline}
           hoveredSlot={dragging ? hoveredSlot : null}
           disabled={showYear}
-          newCardId={roundResult === 'correct' ? currentCard?.id : null}
+          newCardId={roundResult === 'correct' ? (currentCard?.id ?? null) : null}
         />
       </div>
 

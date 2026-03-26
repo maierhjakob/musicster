@@ -2,56 +2,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0;
+  gap: 6px;
   overflow-x: auto;
   padding: 1rem 1rem 1.5rem;
   min-height: 120px;
   -webkit-overflow-scrolling: touch;
-}
-
-.timeline-slot-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.drop-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 0.4rem;
-  gap: 3px;
-  opacity: 0.35;
-  transition: opacity 0.15s, transform 0.15s;
-  color: rgba(255,255,255,0.6);
-  min-width: 36px;
-  min-height: 80px;
-  border-radius: 8px;
-}
-
-.drop-zone.hovered {
-  opacity: 1;
-  transform: scaleY(1.3);
-  color: #ffd32a;
-  background: rgba(255, 211, 42, 0.12);
-}
-
-.drop-zone.disabled {
-  pointer-events: none;
-}
-
-.drop-zone-line {
-  display: block;
-  width: 2px;
-  height: 12px;
-  background: currentColor;
-}
-
-.drop-zone-arrow {
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1;
 }
 
 @keyframes previewPopIn {
@@ -93,6 +48,7 @@
   text-align: center;
   gap: 2px;
   border: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
 }
 
 .tc-year {

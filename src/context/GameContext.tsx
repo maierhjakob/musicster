@@ -1,9 +1,32 @@
-import { createContext, useContext, useReducer } from 'react';
-import { songs, shuffle } from '../data/songs';
+import { createContext, useContext, useReducer, type Dispatch } from 'react';
+import { songs, shuffle, type Song } from '../data/songs';
 
-const GameContext = createContext(null);
+type Screen = 'home' | 'game' | 'result';
+type RoundResult = 'correct' | 'wrong' | null;
 
-const initialState = {
+interface GameState {
+  screen: Screen;
+  timeline: Song[];
+  deck: Song[];
+  currentCard: Song | null;
+  roundResult: RoundResult;
+  showYear: boolean;
+}
+
+type GameAction =
+  | { type: 'START_GAME' }
+  | { type: 'PLACE_CARD'; position: number }
+  | { type: 'NEXT_CARD' }
+  | { type: 'GO_HOME' };
+
+interface GameContextValue {
+  state: GameState;
+  dispatch: Dispatch<GameAction>;
+}
+
+const GameContext = createContext<GameContextValue | null>(null);
+
+const initialState: GameState = {
   screen: 'home',
   timeline: [],
   deck: [],
@@ -12,7 +35,7 @@ const initialState = {
   showYear: false,
 };
 
-function gameReducer(state, action) {
+function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'START_GAME': {
       const deck = shuffle(songs);
@@ -30,6 +53,7 @@ function gameReducer(state, action) {
     case 'PLACE_CARD': {
       const { position } = action;
       const { timeline, currentCard } = state;
+      if (!currentCard) return state;
       const newTimeline = [...timeline];
       newTimeline.splice(position, 0, currentCard);
       const correct = newTimeline.every(
@@ -59,13 +83,10 @@ function gameReducer(state, action) {
 
     case 'GO_HOME':
       return { ...initialState };
-
-    default:
-      return state;
   }
 }
 
-export function GameProvider({ children }) {
+export function GameProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   return (
     <GameContext.Provider value={{ state, dispatch }}>
@@ -74,6 +95,8 @@ export function GameProvider({ children }) {
   );
 }
 
-export function useGame() {
-  return useContext(GameContext);
+export function useGame(): GameContextValue {
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('useGame must be used within GameProvider');
+  return ctx;
 }

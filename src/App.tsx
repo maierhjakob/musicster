@@ -10,7 +10,6 @@ function AppRoutes() {
     case 'home':   return <HomeScreen />;
     case 'game':   return <GameScreen />;
     case 'result': return <ResultScreen />;
-    default:       return <HomeScreen />;
   }
 }
 

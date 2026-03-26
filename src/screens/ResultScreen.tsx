@@ -4,7 +4,7 @@ import './ResultScreen.css';
 export default function ResultScreen() {
   const { state, dispatch } = useGame();
   const { timeline } = state;
-  const placed = timeline.length - 1; // minus the starting card
+  const placed = timeline.length - 1;
 
   return (
     <div className="result-screen">
