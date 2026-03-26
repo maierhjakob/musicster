@@ -33,7 +33,11 @@ export default function HomeScreen() {
           )}
         </div>
 
-        <p className="home-hint">How many songs can you place correctly?</p>
+        <p className="home-hint">
+          {isConnected
+            ? 'Full songs via Spotify · How many can you place correctly?'
+            : '30s previews play automatically · Connect Spotify for full songs'}
+        </p>
       </div>
     </div>
   );

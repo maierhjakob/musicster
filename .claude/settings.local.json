@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C /Users/jamai/work/jakob/Musicster log --oneline)"
+      "Bash(git -C /Users/jamai/work/jakob/Musicster log --oneline)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

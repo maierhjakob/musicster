@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorHttp } from '@capacitor/core';
 import { useGame } from '../context/GameContext';
 import { useSpotify } from '../context/SpotifyContext';
 import SongCard from '../components/SongCard';
@@ -13,13 +15,69 @@ export default function GameScreen() {
   const [dragging, setDragging] = useState(false);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
+  // previewState tracks the card ID of the loaded preview and whether it's playing.
+  // Derived values go stale naturally when currentCard changes, avoiding synchronous setState in effects.
+  const [previewState, setPreviewState] = useState<{ cardId: number; playing: boolean } | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Auto-play each new card via Spotify
+  const hasPreview = previewState?.cardId === currentCard?.id;
+  const isPreviewPlaying = hasPreview && (previewState?.playing ?? false);
+
+  // Auto-play each new card; audio continues playing through the reveal until Next card is pressed
   useEffect(() => {
-    if (currentCard && !showYear && isConnected) {
+    if (!currentCard) return;
+
+    // Clean up previous audio without calling setState (event listeners handle that)
+    audioRef.current?.pause();
+    audioRef.current = null;
+
+    if (isConnected) {
       playTrack(currentCard.title, currentCard.artist);
+    } else {
+      let cancelled = false;
+      const cardId = currentCard.id;
+      const q = encodeURIComponent(`"${currentCard.title}" "${currentCard.artist}"`);
+      const deezerFetch = Capacitor.isNativePlatform()
+        ? CapacitorHttp.get({ url: `https://api.deezer.com/search?q=${q}&limit=1` }).then((r) => r.data)
+        : fetch(`/deezer-api/search?q=${q}&limit=1`).then((r) => r.json());
+      deezerFetch
+        .then((d) => {
+          if (cancelled) return;
+          const url: string | undefined = d.data?.[0]?.preview;
+          if (!url) return;
+          const audio = new Audio(url);
+          audioRef.current = audio;
+          setPreviewState({ cardId, playing: false });
+          audio.addEventListener('play', () => setPreviewState({ cardId, playing: true }));
+          audio.addEventListener('pause', () => setPreviewState((s) => (s?.cardId === cardId ? { cardId, playing: false } : s)));
+          audio.addEventListener('ended', () => setPreviewState((s) => (s?.cardId === cardId ? { cardId, playing: false } : s)));
+          audio.play().catch(() => {});
+        })
+        .catch(() => {});
+
+      return () => {
+        cancelled = true;
+        audioRef.current?.pause();
+        audioRef.current = null;
+      };
     }
-  }, [currentCard?.id, isConnected]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCard?.id, isConnected]); // intentional: card ID guards re-runs; playTrack is stable but recreated each render
+
+  function handleTogglePlay() {
+    if (isConnected) {
+      togglePlay();
+    } else if (audioRef.current) {
+      if (isPreviewPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(() => {});
+      }
+    }
+  }
+
+  const showPlayButton = !showYear && (isConnected || hasPreview);
+  const activeIsPlaying = isConnected ? isPlaying : isPreviewPlaying;
 
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (showYear) return;
@@ -97,9 +155,9 @@ export default function GameScreen() {
           <SongCard song={currentCard} revealed={showYear} />
         </div>
 
-        {isConnected && !showYear && (
-          <button className="btn-play-pause" onClick={togglePlay} aria-label="Toggle playback">
-            {isPlaying ? '⏸' : '▶'}
+        {showPlayButton && (
+          <button className="btn-play-pause" onClick={handleTogglePlay} aria-label="Toggle playback">
+            {activeIsPlaying ? '⏸' : '▶'}
           </button>
         )}
       </div>
