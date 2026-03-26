@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGame } from '../context/GameContext';
+import { useSpotify } from '../context/SpotifyContext';
 import SongCard from '../components/SongCard';
 import Timeline from '../components/Timeline';
 import './GameScreen.css';
@@ -7,10 +8,18 @@ import './GameScreen.css';
 export default function GameScreen() {
   const { state, dispatch } = useGame();
   const { timeline, currentCard, roundResult, showYear, deck } = state;
+  const { isConnected, isPlaying, playTrack, togglePlay } = useSpotify();
 
   const [dragging, setDragging] = useState(false);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
+
+  // Auto-play each new card via Spotify
+  useEffect(() => {
+    if (currentCard && !showYear && isConnected) {
+      playTrack(currentCard.title, currentCard.artist);
+    }
+  }, [currentCard?.id, isConnected]);
 
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (showYear) return;
@@ -33,7 +42,6 @@ export default function GameScreen() {
       const isLeftHalf = e.clientX < rect.left + rect.width / 2;
       setHoveredSlot(isLeftHalf ? cardIndex : cardIndex + 1);
     } else {
-      // In the gap between cards: resolve slot by x position within the timeline
       const inTimeline = elements.some(
         el => el instanceof HTMLElement && el.classList.contains('timeline')
       );
@@ -88,6 +96,12 @@ export default function GameScreen() {
         >
           <SongCard song={currentCard} revealed={showYear} />
         </div>
+
+        {isConnected && !showYear && (
+          <button className="btn-play-pause" onClick={togglePlay} aria-label="Toggle playback">
+            {isPlaying ? '⏸' : '▶'}
+          </button>
+        )}
       </div>
 
       {/* Floating ghost card while dragging */}

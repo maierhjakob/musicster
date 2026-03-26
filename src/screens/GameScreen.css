@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: calc(1rem + var(--sat)) 1.25rem 1rem;
   background: rgba(0,0,0,0.3);
 }
 
@@ -43,6 +43,26 @@
   color: rgba(255,255,255,0.7);
   margin: 0;
   text-align: center;
+}
+
+/* Play/pause button */
+.btn-play-pause {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.btn-play-pause:hover {
+  background: rgba(255,255,255,0.15);
 }
 
 /* Draggable card wrapper */
@@ -99,7 +119,7 @@
 
 /* Footer */
 .game-footer {
-  padding: 1rem 1.25rem 2rem;
+  padding: 1rem 1.25rem calc(1.5rem + var(--sab));
   display: flex;
   flex-direction: column;
   gap: 0.75rem;

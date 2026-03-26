@@ -4,7 +4,7 @@
   justify-content: center;
   min-height: 100dvh;
   background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: 2rem;
+  padding: calc(2rem + var(--sat)) 2rem calc(2rem + var(--sab));
 }
 
 .home-content {
@@ -57,4 +57,29 @@
 .home-hint {
   color: rgba(255, 255, 255, 0.35);
   font-size: 0.85rem;
+}
+
+.spotify-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spotify-connected {
+  color: #1db954;
+  border-color: #1db954;
+}
+
+.spotify-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1db954;
+  animation: spotifyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes spotifyPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
