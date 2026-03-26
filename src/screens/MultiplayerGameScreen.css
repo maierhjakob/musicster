@@ -1,0 +1,123 @@
+.mp-game-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+/* Tentative card (placed but still moveable) */
+.card-draggable.is-tentative {
+  opacity: 0.55;
+}
+
+/* Score chips in top bar */
+.mp-scores {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.mp-score-chip {
+  font-size: 0.75rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  white-space: nowrap;
+}
+
+.mp-score-chip.me {
+  border-color: #f5c518;
+  color: #f5c518;
+  font-weight: 700;
+}
+
+/* Other players' timelines */
+.mp-other-timelines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1.25rem 1rem;
+  border-top: 1px solid #1e1e1e;
+}
+
+.mp-other-player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mp-other-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mp-other-score {
+  color: #444;
+  font-weight: 600;
+}
+
+.mp-mini-timeline-row {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.mp-mini-timeline-row::-webkit-scrollbar {
+  height: 2px;
+}
+
+.mp-mini-timeline-row::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+
+.mp-mini-card-sm {
+  flex-shrink: 0;
+  width: 54px;
+  border-radius: 6px;
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border: 1.5px solid transparent;
+  opacity: 0.75;
+}
+
+.mp-mini-card-sm.starting {
+  background: #161620;
+  border-color: #2a2a2a;
+}
+
+.mp-mini-card-sm.correct {
+  background: #091809;
+  border-color: #1e4d1e;
+}
+
+.mp-mini-card-sm.wrong {
+  background: #1a0909;
+  border-color: #4d1e1e;
+}
+
+.mp-mini-artist-sm {
+  font-size: 0.5rem;
+  color: #777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.mp-mini-year-sm {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #aaa;
+}
+

@@ -4,18 +4,22 @@ import { App as CapApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { GameProvider, useGame } from './context/GameContext';
 import { SpotifyProvider, useSpotify } from './context/SpotifyContext';
+import { MultiplayerProvider, useMultiplayer } from './context/MultiplayerContext';
 import { exchangeCodeForToken } from './lib/spotifyAuth';
 import HomeScreen from './screens/HomeScreen';
 import GameScreen from './screens/GameScreen';
 import ResultScreen from './screens/ResultScreen';
+import LobbyScreen from './screens/LobbyScreen';
+import MultiplayerGameScreen from './screens/MultiplayerGameScreen';
+import MultiplayerResultScreen from './screens/MultiplayerResultScreen';
 
 function AppRoutes() {
   const { state } = useGame();
   const { setToken } = useSpotify();
+  const { state: mpState } = useMultiplayer();
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      // Native: catch the custom-scheme redirect from the external browser
       const listener = CapApp.addListener('appUrlOpen', ({ url }) => {
         const code = new URL(url).searchParams.get('code');
         if (code) {
@@ -25,7 +29,6 @@ function AppRoutes() {
       });
       return () => { listener.then(l => l.remove()); };
     } else {
-      // Web: code arrives as a query param after the redirect
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
       if (code) {
@@ -34,6 +37,11 @@ function AppRoutes() {
       }
     }
   }, []);
+
+  // Multiplayer screens take priority over solo routing
+  if (mpState.mode === 'lobby') return <LobbyScreen />;
+  if (mpState.mode === 'game' || mpState.mode === 'reveal') return <MultiplayerGameScreen />;
+  if (mpState.mode === 'result') return <MultiplayerResultScreen />;
 
   switch (state.screen) {
     case 'home':   return <HomeScreen />;
@@ -46,7 +54,9 @@ export default function App() {
   return (
     <SpotifyProvider>
       <GameProvider>
-        <AppRoutes />
+        <MultiplayerProvider>
+          <AppRoutes />
+        </MultiplayerProvider>
       </GameProvider>
     </SpotifyProvider>
   );

@@ -9,6 +9,8 @@
     "build:sync": "vite build && npx cap sync && npx cap copy",
     "lint": "eslint .",
     "format": "prettier --write src",
+    "party:dev": "partykit dev",
+    "party:deploy": "partykit deploy",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,6 +24,7 @@
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
     "@noble/hashes": "^2.0.1",
+    "partysocket": "^1.1.16",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tslib": "^2.8.1"
@@ -37,6 +40,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "partykit": "^0.0.115",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.2",

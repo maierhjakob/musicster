@@ -59,6 +59,68 @@
   font-size: 0.85rem;
 }
 
+.home-mp-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.home-mp-row .btn {
+  flex: 1;
+}
+
+.home-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 1.5rem;
+}
+
+.home-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 1.5rem;
+}
+
+.home-input {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home-input:focus {
+  border-color: #f5c518;
+}
+
+.home-input-code {
+  text-align: center;
+  letter-spacing: 0.4em;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.home-goal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.home-goal-slider {
+  width: 100%;
+  accent-color: #f5c518;
+}
+
 .spotify-btn {
   display: flex;
   align-items: center;

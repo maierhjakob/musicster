@@ -1,0 +1,4 @@
+{
+  "name": "musicster",
+  "main": "party/index.ts"
+}

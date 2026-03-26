@@ -57,6 +57,24 @@
   color: #ffd32a;
 }
 
+.tc-year-hidden {
+  color: #555;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Tentative card — placed but not yet confirmed */
+.timeline-card.tentative {
+  border: 1.5px dashed rgba(255, 211, 42, 0.5);
+  background: #161e2e;
+  cursor: grab;
+  touch-action: none;
+}
+
+.timeline-card.tentative:active {
+  cursor: grabbing;
+}
+
 .tc-title {
   font-size: 0.6rem;
   color: #fff;
