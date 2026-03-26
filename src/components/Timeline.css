@@ -15,42 +15,69 @@
   align-items: center;
 }
 
-.drop-slot {
+.drop-zone {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  gap: 2px;
-  opacity: 0.5;
-  transition: opacity 0.2s, transform 0.2s;
+  justify-content: center;
+  padding: 0.5rem 0.4rem;
+  gap: 3px;
+  opacity: 0.35;
+  transition: opacity 0.15s, transform 0.15s;
   color: rgba(255,255,255,0.6);
+  min-width: 36px;
+  min-height: 80px;
+  border-radius: 8px;
 }
 
-.drop-slot:hover:not(:disabled) {
+.drop-zone.hovered {
   opacity: 1;
-  transform: scaleX(1.2);
+  transform: scaleY(1.3);
+  color: #ffd32a;
+  background: rgba(255, 211, 42, 0.12);
 }
 
-.drop-slot:disabled {
-  cursor: default;
+.drop-zone.disabled {
   pointer-events: none;
 }
 
-.drop-slot-line {
+.drop-zone-line {
   display: block;
-  width: 14px;
-  height: 2px;
-  background: rgba(255,255,255,0.4);
+  width: 2px;
+  height: 12px;
+  background: currentColor;
 }
 
-.drop-slot-arrow {
-  font-size: 1.1rem;
+.drop-zone-arrow {
+  font-size: 1rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.7);
   line-height: 1;
+}
+
+@keyframes previewPopIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.timeline-card-preview {
+  min-width: 80px;
+  max-width: 100px;
+  height: 62px;
+  border-radius: 10px;
+  border: 2px dashed #ffd32a;
+  background: rgba(255, 211, 42, 0.08);
+  flex-shrink: 0;
+  animation: previewPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.4); opacity: 0; }
+  60%  { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.timeline-card.pop-in {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .timeline-card {

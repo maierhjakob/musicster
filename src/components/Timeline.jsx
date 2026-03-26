@@ -1,26 +1,27 @@
 import './Timeline.css';
 
-// Shows the player's timeline with drop-zone slots between each card
-export default function Timeline({ cards, onPlace, disabled }) {
+export default function Timeline({ cards, hoveredSlot, disabled, newCardId }) {
   const slotCount = cards.length + 1;
 
   return (
     <div className="timeline">
       {Array.from({ length: slotCount }, (_, i) => (
         <div key={i} className="timeline-slot-group">
-          <button
-            className="drop-slot"
-            onClick={() => !disabled && onPlace(i)}
-            disabled={disabled}
-            aria-label={`Place before ${cards[i]?.title ?? 'end'}`}
+          <div
+            className={`drop-zone ${hoveredSlot === i ? 'hovered' : ''} ${disabled ? 'disabled' : ''}`}
+            data-slot-index={i}
           >
-            <span className="drop-slot-line" />
-            <span className="drop-slot-arrow">+</span>
-            <span className="drop-slot-line" />
-          </button>
+            <span className="drop-zone-line" />
+            <span className="drop-zone-arrow">↓</span>
+            <span className="drop-zone-line" />
+          </div>
+
+          {hoveredSlot === i && !disabled && (
+            <div className="timeline-card-preview" />
+          )}
 
           {i < cards.length && (
-            <div className="timeline-card">
+            <div className={`timeline-card ${cards[i].id === newCardId ? 'pop-in' : ''}`}>
               <span className="tc-year">{cards[i].year}</span>
               <span className="tc-title">{cards[i].title}</span>
               <span className="tc-artist">{cards[i].artist}</span>

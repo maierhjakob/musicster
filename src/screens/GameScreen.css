@@ -24,13 +24,6 @@
   padding: 0.25rem;
 }
 
-.turn-indicator {
-  font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 .deck-count {
   font-size: 0.8rem;
   color: rgba(255,255,255,0.4);
@@ -52,10 +45,35 @@
   text-align: center;
 }
 
-.card-hint {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.35);
-  margin: 0;
+/* Draggable card wrapper */
+.card-draggable {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: opacity 0.15s;
+}
+
+.card-draggable.is-dragging {
+  cursor: grabbing;
+  opacity: 0.25;
+}
+
+.card-draggable.no-drag {
+  cursor: default;
+}
+
+/* Floating ghost while dragging — matches timeline card size */
+.card-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  width: 90px;
+  height: 62px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e94560, #c62a47);
+  opacity: 0.9;
+  transform: rotate(-3deg) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 
 /* Timeline area */
@@ -105,45 +123,4 @@
   background: rgba(233, 69, 96, 0.15);
   color: #e94560;
   border: 1px solid rgba(233, 69, 96, 0.3);
-}
-
-/* Scoreboard */
-.scoreboard {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  z-index: 10;
-  /* only visible when no footer open */
-}
-
-.game-footer ~ .scoreboard {
-  display: none;
-}
-
-.score-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(0,0,0,0.6);
-  border: 1.5px solid transparent;
-  border-radius: 20px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.75rem;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-}
-
-.score-pill.active {
-  opacity: 1;
-}
-
-.score-name {
-  color: rgba(255,255,255,0.7);
-}
-
-.score-count {
-  font-weight: 700;
 }

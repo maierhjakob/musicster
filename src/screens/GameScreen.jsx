@@ -1,21 +1,40 @@
+import { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import SongCard from '../components/SongCard';
 import Timeline from '../components/Timeline';
 import './GameScreen.css';
 
-const COLORS = ['#e94560', '#0f3460', '#533483', '#05c46b', '#ffd32a', '#ff5e57'];
-
 export default function GameScreen() {
   const { state, dispatch } = useGame();
-  const { players, currentPlayerIndex, currentCard, roundResult, showYear, deck } = state;
-  const currentPlayer = players[currentPlayerIndex];
+  const { timeline, currentCard, roundResult, showYear, deck } = state;
 
-  function handlePlace(position) {
-    dispatch({ type: 'PLACE_CARD', position });
+  const [dragging, setDragging] = useState(false);
+  const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
+  const [hoveredSlot, setHoveredSlot] = useState(null);
+
+  function handlePointerDown(e) {
+    if (showYear) return;
+    e.preventDefault();
+    setDragging(true);
+    setDragPos({ x: e.clientX, y: e.clientY });
+    e.currentTarget.setPointerCapture(e.pointerId);
   }
 
-  function handleNext() {
-    dispatch({ type: 'NEXT_TURN' });
+  function handlePointerMove(e) {
+    if (!dragging) return;
+    setDragPos({ x: e.clientX, y: e.clientY });
+    const elements = document.elementsFromPoint(e.clientX, e.clientY);
+    const slotEl = elements.find(el => el.dataset && el.dataset.slotIndex !== undefined);
+    setHoveredSlot(slotEl ? parseInt(slotEl.dataset.slotIndex) : null);
+  }
+
+  function handlePointerUp(e) {
+    if (!dragging) return;
+    setDragging(false);
+    if (hoveredSlot !== null) {
+      dispatch({ type: 'PLACE_CARD', position: hoveredSlot });
+    }
+    setHoveredSlot(null);
   }
 
   return (
@@ -23,69 +42,62 @@ export default function GameScreen() {
       {/* Top bar */}
       <div className="game-topbar">
         <button className="btn-back" onClick={() => dispatch({ type: 'GO_HOME' })}>✕</button>
-        <div className="turn-indicator" style={{ color: COLORS[currentPlayerIndex] }}>
-          {currentPlayer.name}'s turn
-        </div>
-        <div className="deck-count">{deck.length} left</div>
+        <div className="deck-count">{deck.length} remaining</div>
       </div>
 
       {/* Current card */}
       <div className="card-area">
         <p className="card-area-label">
-          {showYear ? (
-            roundResult === 'correct'
-              ? '✅ Correct! It was…'
-              : '❌ Wrong! It was…'
-          ) : 'Where does this song fit?'}
+          {showYear
+            ? (roundResult === 'correct' ? '✅ Correct!' : '❌ Wrong!')
+            : 'Drag this song into your timeline'}
         </p>
 
-        <SongCard song={currentCard} revealed={showYear} />
-
-        {!showYear && (
-          <p className="card-hint">Tap a slot in your timeline below</p>
-        )}
+        <div
+          className={`card-draggable ${dragging ? 'is-dragging' : ''} ${showYear ? 'no-drag' : ''}`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        >
+          <SongCard song={currentCard} revealed={showYear} />
+        </div>
       </div>
+
+      {/* Floating ghost card while dragging */}
+      {dragging && (
+        <div
+          className="card-ghost"
+          style={{ left: dragPos.x - 45, top: dragPos.y - 31 }}
+        />
+      )}
 
       {/* Timeline */}
       <div className="timeline-area">
         <p className="timeline-label">
-          {currentPlayer.name}'s timeline
-          <span className="timeline-count"> ({currentPlayer.timeline.length} cards)</span>
+          Your timeline
+          <span className="timeline-count"> ({timeline.length} cards)</span>
         </p>
         <Timeline
-          cards={currentPlayer.timeline}
-          onPlace={handlePlace}
+          cards={timeline}
+          hoveredSlot={dragging ? hoveredSlot : null}
           disabled={showYear}
+          newCardId={roundResult === 'correct' ? currentCard?.id : null}
         />
       </div>
 
-      {/* Footer */}
+      {/* Footer after placement */}
       {showYear && (
         <div className="game-footer">
           <div className={`result-banner ${roundResult}`}>
             {roundResult === 'correct'
-              ? `+1 card for ${currentPlayer.name}!`
-              : `No card for ${currentPlayer.name} this round`}
+              ? 'Added to your timeline!'
+              : `Nope — it was ${currentCard?.year}`}
           </div>
-          <button className="btn btn-primary" onClick={handleNext}>
-            Next player →
+          <button className="btn btn-primary" onClick={() => dispatch({ type: 'NEXT_CARD' })}>
+            {deck.length === 0 ? 'See results →' : 'Next card →'}
           </button>
         </div>
       )}
-
-      {/* Scoreboard pill */}
-      <div className="scoreboard">
-        {players.map((p, i) => (
-          <div
-            key={i}
-            className={`score-pill ${i === currentPlayerIndex ? 'active' : ''}`}
-            style={{ borderColor: COLORS[i] }}
-          >
-            <span className="score-name">{p.name}</span>
-            <span className="score-count" style={{ color: COLORS[i] }}>{p.timeline.length}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

@@ -14,12 +14,12 @@ export default function HomeScreen() {
         </div>
 
         <div className="home-actions">
-          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_SETUP' })}>
+          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME' })}>
             Play
           </button>
         </div>
 
-        <p className="home-hint">2–6 players · Ages 10+</p>
+        <p className="home-hint">How many songs can you place correctly?</p>
       </div>
     </div>
   );
