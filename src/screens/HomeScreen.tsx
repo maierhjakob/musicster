@@ -1,11 +1,8 @@
 import { useGame } from '../context/GameContext';
-import { useSpotify } from '../context/SpotifyContext';
-import { redirectToSpotifyAuth } from '../lib/spotifyAuth';
 import './HomeScreen.css';
 
 export default function HomeScreen() {
   const { dispatch } = useGame();
-  const { token, isConnected, disconnect } = useSpotify();
 
   return (
     <div className="home-screen">
@@ -20,23 +17,10 @@ export default function HomeScreen() {
           <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME' })}>
             Play
           </button>
-
-          {token ? (
-            <button className="btn btn-secondary spotify-btn spotify-connected" onClick={disconnect}>
-              <span className="spotify-dot" />
-              {isConnected ? 'Spotify connected' : 'Spotify connecting…'}
-            </button>
-          ) : (
-            <button className="btn btn-secondary spotify-btn" onClick={redirectToSpotifyAuth}>
-              Connect Spotify
-            </button>
-          )}
         </div>
 
         <p className="home-hint">
-          {isConnected
-            ? 'Full songs via Spotify · How many can you place correctly?'
-            : '30s previews play automatically · Connect Spotify for full songs'}
+          30s previews play automatically
         </p>
       </div>
     </div>
