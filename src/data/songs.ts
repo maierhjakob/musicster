@@ -1,5 +1,5 @@
-export type Genre = 'Rock' | 'Pop' | 'Hip-Hop' | 'Soul';
-export const GENRES: Genre[] = ['Rock', 'Pop', 'Hip-Hop', 'Soul'];
+export type Genre = 'Rock' | 'Pop' | 'Hip-Hop' | 'Soul' | 'Metal';
+export const GENRES: Genre[] = ['Rock', 'Pop', 'Hip-Hop', 'Soul', 'Metal'];
 
 export interface Song {
   id: number;

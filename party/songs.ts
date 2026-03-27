@@ -1,4 +1,4 @@
-export type Genre = 'Rock' | 'Pop' | 'Hip-Hop' | 'Soul';
+export type Genre = 'Rock' | 'Pop' | 'Hip-Hop' | 'Soul' | 'Metal';
 
 export interface Song {
   id: number;
@@ -40,4 +40,5 @@ export const songs: Song[] = [
   { id: 28, title: "Angie",                    artist: "The Rolling Stones",            year: 1973, genre: 'Rock',    previewUrl: null },
   { id: 29, title: "Jump",                     artist: "Van Halen",                     year: 1984, genre: 'Rock',    previewUrl: null },
   { id: 30, title: "Sweet Child O' Mine",      artist: "Guns N' Roses",                 year: 1987, genre: 'Rock',    previewUrl: null },
+  { id: 31, title: "Crazy Train",      artist: "Ozzy Osbourne",                 year: 1980, genre: 'Metal',    previewUrl: null },
 ];
