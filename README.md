@@ -18,4 +18,4 @@ After a game ends anyone can tap Play Again to return to the lobby and start a n
 
 ## Adding songs
 
-Songs are managed server-side in `party/songs.ts`. To add a song, append an entry to the array and run `npx partykit deploy`. No app update is required. If you introduce a new genre, also add it to `src/data/songs.ts` and redeploy the web app.
+Songs are managed server-side in `party/songs.ts`. Make PR if you want to add Songs
