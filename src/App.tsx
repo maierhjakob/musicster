@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
+import { SongsProvider, useSongs } from './context/SongsContext';
 import { GameProvider, useGame } from './context/GameContext';
 import { SpotifyProvider, useSpotify } from './context/SpotifyContext';
 import { MultiplayerProvider, useMultiplayer } from './context/MultiplayerContext';
@@ -14,6 +15,7 @@ import MultiplayerGameScreen from './screens/MultiplayerGameScreen';
 import MultiplayerResultScreen from './screens/MultiplayerResultScreen';
 
 function AppRoutes() {
+  const songs = useSongs();
   const { state } = useGame();
   const { setToken } = useSpotify();
   const { state: mpState } = useMultiplayer();
@@ -38,6 +40,8 @@ function AppRoutes() {
     }
   }, []);
 
+  if (songs.length === 0) return null;
+
   // Multiplayer screens take priority over solo routing
   if (mpState.mode === 'lobby') return <LobbyScreen />;
   if (mpState.mode === 'game' || mpState.mode === 'reveal') return <MultiplayerGameScreen />;
@@ -52,12 +56,14 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <SpotifyProvider>
-      <GameProvider>
-        <MultiplayerProvider>
-          <AppRoutes />
-        </MultiplayerProvider>
-      </GameProvider>
-    </SpotifyProvider>
+    <SongsProvider>
+      <SpotifyProvider>
+        <GameProvider>
+          <MultiplayerProvider>
+            <AppRoutes />
+          </MultiplayerProvider>
+        </GameProvider>
+      </SpotifyProvider>
+    </SongsProvider>
   );
 }

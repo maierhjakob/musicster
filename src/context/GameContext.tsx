@@ -1,5 +1,6 @@
-import { createContext, useContext, useReducer, type Dispatch } from 'react';
-import { songs, shuffle, type Song } from '../data/songs';
+import { createContext, useCallback, useContext, useReducer, type Dispatch } from 'react';
+import { shuffle, type Song } from '../data/songs';
+import { useSongs } from './SongsContext';
 
 type Screen = 'home' | 'game' | 'result';
 type RoundResult = 'correct' | 'wrong' | null;
@@ -13,7 +14,15 @@ interface GameState {
   showYear: boolean;
 }
 
-type GameAction =
+// Internal action includes the pre-shuffled deck so the reducer stays pure
+type InternalAction =
+  | { type: '_START'; deck: Song[] }
+  | { type: 'PLACE_CARD'; position: number }
+  | { type: 'NEXT_CARD' }
+  | { type: 'GO_HOME' };
+
+// Public action surface — callers just dispatch START_GAME with no args
+export type GameAction =
   | { type: 'START_GAME' }
   | { type: 'PLACE_CARD'; position: number }
   | { type: 'NEXT_CARD' }
@@ -35,18 +44,16 @@ const initialState: GameState = {
   showYear: false,
 };
 
-function gameReducer(state: GameState, action: GameAction): GameState {
+function gameReducer(state: GameState, action: InternalAction): GameState {
   switch (action.type) {
-    case 'START_GAME': {
-      const deck = shuffle(songs);
-      const startingCard = deck[0];
-      const firstCard = deck[1];
+    case '_START': {
+      const { deck } = action;
       return {
         ...initialState,
         screen: 'game',
-        timeline: [startingCard],
+        timeline: [deck[0]],
         deck: deck.slice(2),
-        currentCard: firstCard,
+        currentCard: deck[1],
       };
     }
 
@@ -87,7 +94,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 }
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const songs = useSongs();
+  const [state, internalDispatch] = useReducer(gameReducer, initialState);
+
+  const dispatch = useCallback((action: GameAction) => {
+    if (action.type === 'START_GAME') {
+      internalDispatch({ type: '_START', deck: shuffle(songs) });
+    } else {
+      internalDispatch(action);
+    }
+  }, [songs]);
+
   return (
     <GameContext.Provider value={{ state, dispatch }}>
       {children}

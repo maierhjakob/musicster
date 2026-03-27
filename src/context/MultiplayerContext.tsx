@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useReducer, useRef } from 'react';
 import PartySocket from 'partysocket';
-import { songs, type Song } from '../data/songs';
+import type { Song } from '../data/songs';
+import { useSongs } from './SongsContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -57,10 +58,6 @@ type MpAction =
 // ---------------------------------------------------------------------------
 
 const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
-
-function songById(id: number): Song | undefined {
-  return songs.find((s) => s.id === id);
-}
 
 
 function generateRoomCode(): string {
@@ -209,6 +206,9 @@ const MultiplayerContext = createContext<MultiplayerContextValue | null>(null);
 // ---------------------------------------------------------------------------
 
 export function MultiplayerProvider({ children }: { children: React.ReactNode }) {
+  const songs = useSongs();
+  const songById = (id: number): Song | undefined => songs.find((s) => s.id === id);
+
   const [state, dispatch] = useReducer(mpReducer, initialState);
   const socketRef = useRef<PartySocket | null>(null);
   const pendingPlaceRef = useRef<{ position: number; correct: boolean } | null>(null);

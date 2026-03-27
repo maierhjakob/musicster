@@ -1,5 +1,5 @@
 import type * as Party from 'partykit/server';
-import { songs } from '../src/data/songs';
+import { songs } from './songs';
 
 const songsById = new Map(songs.map((s) => [s.id, s]));
 
@@ -61,15 +61,21 @@ export default class MusicsterRoom implements Party.Server {
 
   async onRequest(req: Party.Request): Promise<Response> {
     const url = new URL(req.url);
+    const roomId = url.pathname.split('/').pop();
+
+    if (roomId === 'songs') {
+      return new Response(JSON.stringify(songs), {
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // Deezer proxy
     const q = url.searchParams.get('q') ?? '';
     const limit = url.searchParams.get('limit') ?? '1';
     const res = await fetch(`https://api.deezer.com/search?q=${q}&limit=${limit}`);
     const data = await res.json();
     return new Response(JSON.stringify(data), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     });
   }
 
