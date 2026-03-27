@@ -1,12 +1,51 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorHttp } from '@capacitor/core';
 import { useMultiplayer } from '../context/MultiplayerContext';
 import SongCard from '../components/SongCard';
 import Timeline from '../components/Timeline';
 import './MultiplayerGameScreen.css';
 
+const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
+
 export default function MultiplayerGameScreen() {
   const { state, placeCard, unplaceCard, leaveRoom } = useMultiplayer();
   const { currentCard, myTimeline, isTentative, myLastResult, waiting, players, goal, mode, allTimelines, playerName } = state;
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Fetch and auto-play Deezer preview whenever the current card changes
+  useEffect(() => {
+    if (!currentCard) return;
+    audioRef.current?.pause();
+    audioRef.current = null;
+
+    let cancelled = false;
+    const q = encodeURIComponent(`"${currentCard.title}" "${currentCard.artist}"`);
+    const deezerFetch = Capacitor.isNativePlatform()
+      ? CapacitorHttp.get({ url: `https://api.deezer.com/search?q=${q}&limit=1` }).then((r) => r.data)
+      : import.meta.env.DEV
+        ? fetch(`/deezer-api/search?q=${q}&limit=1`).then((r) => r.json())
+        : fetch(`https://${PARTYKIT_HOST}/parties/main/proxy?q=${q}&limit=1`).then((r) => r.json());
+
+    deezerFetch
+      .then((d) => {
+        if (cancelled) return;
+        const url: string | undefined = d.data?.[0]?.preview;
+        if (!url) return;
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.play().catch(() => {});
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCard?.id]);
 
   const [dragging, setDragging] = useState(false);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
