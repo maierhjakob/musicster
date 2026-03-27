@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
+import { GENRES, type Genre } from '../data/songs';
 import './HomeScreen.css';
 
 export default function HomeScreen() {
@@ -11,10 +12,11 @@ export default function HomeScreen() {
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [goal, setGoal] = useState(8);
+  const [genre, setGenre] = useState<Genre | null>(null);
 
   function handleCreate() {
     if (!playerName.trim()) return;
-    createRoom(playerName.trim(), goal);
+    createRoom(playerName.trim(), goal, genre);
   }
 
   function handleJoin() {
@@ -39,17 +41,33 @@ export default function HomeScreen() {
             />
 
             {joinMode === 'create' && (
-              <label className="home-goal-label">
-                Win goal: {goal} correct
-                <input
-                  type="range"
-                  min={3}
-                  max={20}
-                  value={goal}
-                  onChange={(e) => setGoal(Number(e.target.value))}
-                  className="home-goal-slider"
-                />
-              </label>
+              <>
+                <div className="home-genre-picker">
+                  <button
+                    className={`home-genre-btn ${genre === null ? 'active' : ''}`}
+                    onClick={() => setGenre(null)}
+                  >All</button>
+                  {GENRES.map((g) => (
+                    <button
+                      key={g}
+                      className={`home-genre-btn ${genre === g ? 'active' : ''}`}
+                      onClick={() => setGenre(g)}
+                    >{g}</button>
+                  ))}
+                </div>
+
+                <label className="home-goal-label">
+                  Win goal: {goal} correct
+                  <input
+                    type="range"
+                    min={3}
+                    max={20}
+                    value={goal}
+                    onChange={(e) => setGoal(Number(e.target.value))}
+                    className="home-goal-slider"
+                  />
+                </label>
+              </>
             )}
 
             {joinMode === 'join' && (
@@ -89,8 +107,22 @@ export default function HomeScreen() {
           <p className="logo-subtitle">Place the hits in order</p>
         </div>
 
+        <div className="home-genre-picker">
+          <button
+            className={`home-genre-btn ${genre === null ? 'active' : ''}`}
+            onClick={() => setGenre(null)}
+          >All</button>
+          {GENRES.map((g) => (
+            <button
+              key={g}
+              className={`home-genre-btn ${genre === g ? 'active' : ''}`}
+              onClick={() => setGenre(g)}
+            >{g}</button>
+          ))}
+        </div>
+
         <div className="home-actions">
-          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME' })}>
+          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME', genre })}>
             Play solo
           </button>
 

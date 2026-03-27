@@ -1,8 +1,9 @@
 import { useMultiplayer } from '../context/MultiplayerContext';
+import { GENRES } from '../data/songs';
 import './LobbyScreen.css';
 
 export default function LobbyScreen() {
-  const { state, startGame, setGoal, leaveRoom } = useMultiplayer();
+  const { state, startGame, setGoal, setGenre, leaveRoom } = useMultiplayer();
   function handleGoalChange(val: string) {
     const n = parseInt(val);
     if (!isNaN(n) && n >= 1 && n <= 30) setGoal(n);
@@ -28,6 +29,20 @@ export default function LobbyScreen() {
 
         {state.isHost ? (
           <div className="lobby-settings">
+            <div className="lobby-genre-picker">
+              <button
+                className={`lobby-genre-btn ${state.genre === null ? 'active' : ''}`}
+                onClick={() => setGenre(null)}
+              >All</button>
+              {GENRES.map((g) => (
+                <button
+                  key={g}
+                  className={`lobby-genre-btn ${state.genre === g ? 'active' : ''}`}
+                  onClick={() => setGenre(g)}
+                >{g}</button>
+              ))}
+            </div>
+
             <label className="lobby-setting-label">
               Win goal
               <div className="lobby-goal-row">
@@ -53,7 +68,12 @@ export default function LobbyScreen() {
             </button>
           </div>
         ) : (
-          <p className="lobby-waiting">Waiting for the host to start…</p>
+          <>
+            <p className="lobby-genre-display">
+              Genre: <strong>{state.genre ?? 'All'}</strong>
+            </p>
+            <p className="lobby-waiting">Waiting for the host to start…</p>
+          </>
         )}
       </div>
     </div>

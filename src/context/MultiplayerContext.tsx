@@ -29,6 +29,7 @@ export interface MultiplayerState {
   isHost: boolean;
   players: PlayerInfo[];
   goal: number;
+  genre: string | null;
 
   // Game
   currentCard: Song | null;
@@ -44,7 +45,7 @@ export interface MultiplayerState {
 
 type MpAction =
   | { type: 'SET_LOBBY'; roomCode: string; playerName: string; isHost: boolean; goal: number }
-  | { type: 'ROOM_STATE'; players: PlayerInfo[]; goal: number }
+  | { type: 'ROOM_STATE'; players: PlayerInfo[]; goal: number; genre: string | null }
   | { type: 'GAME_STARTED'; startingCard: Song; firstCard: Song; goal: number }
   | { type: 'CARD_DEALT'; card: Song }
   | { type: 'PLACE_CARD'; position: number }
@@ -78,6 +79,7 @@ const initialState: MultiplayerState = {
   isHost: false,
   players: [],
   goal: 8,
+  genre: null,
   currentCard: null,
   myTimeline: [],
   isTentative: false,
@@ -104,6 +106,7 @@ function mpReducer(state: MultiplayerState, action: MpAction): MultiplayerState 
         ...state,
         players: action.players,
         goal: action.goal,
+        genre: action.genre,
         isHost: action.players.find((p) => p.name === state.playerName)?.isHost ?? state.isHost,
       };
 
@@ -205,10 +208,11 @@ function mpReducer(state: MultiplayerState, action: MpAction): MultiplayerState 
 
 interface MultiplayerContextValue {
   state: MultiplayerState;
-  createRoom: (playerName: string, goal: number) => void;
+  createRoom: (playerName: string, goal: number, genre?: string | null) => void;
   joinRoom: (roomCode: string, playerName: string) => void;
   startGame: () => void;
   setGoal: (goal: number) => void;
+  setGenre: (genre: string | null) => void;
   placeCard: (position: number) => void;
   unplaceCard: () => void;
   playAgain: () => void;
@@ -231,7 +235,7 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
   const socketRef = useRef<PartySocket | null>(null);
   const pendingPlaceRef = useRef<{ position: number; correct: boolean } | null>(null);
 
-  function connect(roomCode: string, playerName: string, goal: number, isHost: boolean) {
+  function connect(roomCode: string, playerName: string, goal: number, isHost: boolean, genre: string | null = null) {
     socketRef.current?.close();
 
     const socket = new PartySocket({
@@ -240,7 +244,7 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
     });
 
     socket.addEventListener('open', () => {
-      socket.send(JSON.stringify({ type: 'join', playerName, goal }));
+      socket.send(JSON.stringify({ type: 'join', playerName, goal, genre }));
     });
 
     socket.addEventListener('message', (e: MessageEvent) => {
@@ -259,6 +263,7 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
           type: 'ROOM_STATE',
           players: msg.players as PlayerInfo[],
           goal: msg.goal as number,
+          genre: (msg.genre as string) ?? null,
         });
         break;
 
@@ -312,9 +317,9 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
     }
   }
 
-  const createRoom = useCallback((playerName: string, goal: number) => {
+  const createRoom = useCallback((playerName: string, goal: number, genre?: string | null) => {
     const roomCode = generateRoomCode();
-    connect(roomCode, playerName, goal, true);
+    connect(roomCode, playerName, goal, true, genre ?? null);
   }, []);
 
   const joinRoom = useCallback((roomCode: string, playerName: string) => {
@@ -327,6 +332,10 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
 
   const setGoal = useCallback((goal: number) => {
     socketRef.current?.send(JSON.stringify({ type: 'set_goal', goal }));
+  }, []);
+
+  const setGenre = useCallback((genre: string | null) => {
+    socketRef.current?.send(JSON.stringify({ type: 'set_genre', genre }));
   }, []);
 
   const placeCard = useCallback(
@@ -363,7 +372,7 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
   void pendingPlaceRef;
 
   return (
-    <MultiplayerContext.Provider value={{ state, createRoom, joinRoom, startGame, setGoal, placeCard, unplaceCard, playAgain, leaveRoom }}>
+    <MultiplayerContext.Provider value={{ state, createRoom, joinRoom, startGame, setGoal, setGenre, placeCard, unplaceCard, playAgain, leaveRoom }}>
       {children}
     </MultiplayerContext.Provider>
   );

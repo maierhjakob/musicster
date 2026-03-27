@@ -145,3 +145,26 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+.home-genre-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.home-genre-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.home-genre-btn.active {
+  border-color: #ffd32a;
+  color: #ffd32a;
+  background: rgba(255,211,42,0.1);
+}

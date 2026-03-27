@@ -15,6 +15,7 @@ interface Player {
 interface RoomState {
   host: string;
   goal: number;
+  genre: string | null;
   gameStarted: boolean;
   deck: number[];
   deckIndex: number;
@@ -50,6 +51,7 @@ export default class MusicsterRoom implements Party.Server {
     this.state = {
       host: '',
       goal: 8,
+      genre: null,
       gameStarted: false,
       deck: [],
       deckIndex: 0,
@@ -102,6 +104,7 @@ export default class MusicsterRoom implements Party.Server {
         if (isFirstPlayer) {
           this.state.host = sender.id;
           this.state.goal = msg.goal ?? this.state.goal;
+          this.state.genre = (msg.genre as string) || null;
         }
         this.state.players.set(sender.id, {
           id: sender.id,
@@ -122,12 +125,22 @@ export default class MusicsterRoom implements Party.Server {
         break;
       }
 
+      case 'set_genre': {
+        if (sender.id !== this.state.host) return;
+        this.state.genre = (msg.genre as string) || null;
+        this.broadcast({ type: 'room_state', ...this.getRoomSnapshot() });
+        break;
+      }
+
       case 'start_game': {
         if (sender.id !== this.state.host) return;
         this.state.gameStarted = true;
         this.state.phase = 'placing';
 
-        const allIds = songs.map((s) => s.id);
+        const pool = this.state.genre
+          ? songs.filter((s) => s.genre === this.state.genre)
+          : songs;
+        const allIds = pool.map((s) => s.id);
         const shuffled = shuffle(allIds);
         this.state.startingCardId = shuffled[0];
         this.state.deck = shuffled.slice(1);
@@ -249,6 +262,7 @@ export default class MusicsterRoom implements Party.Server {
         isHost: p.id === this.state.host,
       })),
       goal: this.state.goal,
+      genre: this.state.genre,
       gameStarted: this.state.gameStarted,
     };
   }

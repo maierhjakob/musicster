@@ -129,3 +129,32 @@
   color: #555;
   font-size: 0.95rem;
 }
+.lobby-genre-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.lobby-genre-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.lobby-genre-btn.active {
+  border-color: #ffd32a;
+  color: #ffd32a;
+  background: rgba(255,211,42,0.1);
+}
+
+.lobby-genre-display {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0 0 0.5rem;
+}

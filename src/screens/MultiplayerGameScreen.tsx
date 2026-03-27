@@ -10,7 +10,7 @@ const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
 
 export default function MultiplayerGameScreen() {
   const { state, placeCard, unplaceCard, leaveRoom } = useMultiplayer();
-  const { currentCard, myTimeline, isTentative, myLastResult, waiting, players, goal, mode, allTimelines, playerName } = state;
+  const { currentCard, myTimeline, isTentative, myLastResult, waiting, goal, mode, allTimelines, playerName } = state;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [previewState, setPreviewState] = useState<{ cardId: number; playing: boolean } | null>(null);
