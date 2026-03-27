@@ -37,9 +37,12 @@ export default function GameScreen() {
       let cancelled = false;
       const cardId = currentCard.id;
       const q = encodeURIComponent(`"${currentCard.title}" "${currentCard.artist}"`);
+      const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
       const deezerFetch = Capacitor.isNativePlatform()
         ? CapacitorHttp.get({ url: `https://api.deezer.com/search?q=${q}&limit=1` }).then((r) => r.data)
-        : fetch(`/deezer-api/search?q=${q}&limit=1`).then((r) => r.json());
+        : import.meta.env.DEV
+          ? fetch(`/deezer-api/search?q=${q}&limit=1`).then((r) => r.json())
+          : fetch(`https://${PARTYKIT_HOST}/parties/main/proxy?q=${q}&limit=1`).then((r) => r.json());
       deezerFetch
         .then((d) => {
           if (cancelled) return;
