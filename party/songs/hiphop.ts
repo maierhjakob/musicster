@@ -41,7 +41,6 @@ export const hiphop: SongData[] = [
   { title: "DNA.",                    artist: "Kendrick Lamar",             year: 2017 },
   { title: "Swimming Pools (Drank)",  artist: "Kendrick Lamar",             year: 2012 },
   { title: "Mask Off",                artist: "Future",                     year: 2017 },
-  { title: "Life Is Good",            artist: "Future ft. Drake",           year: 2020 },
   { title: "Bad and Boujee",          artist: "Migos ft. Lil Uzi Vert",     year: 2016 },
   { title: "Suge",                    artist: "DaBaby",                     year: 2019 },
   { title: "ROXANNE",                 artist: "Arizona Zervas",             year: 2019 },

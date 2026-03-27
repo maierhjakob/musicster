@@ -92,3 +92,39 @@
   text-overflow: ellipsis;
   max-width: 90px;
 }
+
+@media (min-width: 768px) {
+  .timeline {
+    min-height: 180px;
+    gap: 10px;
+    padding: 1.25rem 1.5rem 2rem;
+  }
+
+  .timeline-card {
+    min-width: 120px;
+    max-width: 160px;
+    padding: 0.75rem 1rem;
+    gap: 4px;
+  }
+
+  .timeline-card-preview {
+    min-width: 120px;
+    max-width: 160px;
+    height: 96px;
+  }
+
+  .tc-year,
+  .tc-year-hidden {
+    font-size: 1.3rem;
+  }
+
+  .tc-title {
+    font-size: 0.8rem;
+    max-width: 140px;
+  }
+
+  .tc-artist {
+    font-size: 0.7rem;
+    max-width: 140px;
+  }
+}
