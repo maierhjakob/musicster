@@ -13,6 +13,10 @@ export default function MultiplayerGameScreen() {
   const { currentCard, myTimeline, isTentative, myLastResult, waiting, players, goal, mode, allTimelines, playerName } = state;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [previewState, setPreviewState] = useState<{ cardId: number; playing: boolean } | null>(null);
+
+  const hasPreview = previewState?.cardId === currentCard?.id;
+  const isPreviewPlaying = hasPreview && (previewState?.playing ?? false);
 
   // Fetch and auto-play Deezer preview whenever the current card changes
   useEffect(() => {
@@ -21,6 +25,7 @@ export default function MultiplayerGameScreen() {
     audioRef.current = null;
 
     let cancelled = false;
+    const cardId = currentCard.id;
     const q = encodeURIComponent(`"${currentCard.title}" "${currentCard.artist}"`);
     const deezerFetch = Capacitor.isNativePlatform()
       ? CapacitorHttp.get({ url: `https://api.deezer.com/search?q=${q}&limit=1` }).then((r) => r.data)
@@ -35,6 +40,10 @@ export default function MultiplayerGameScreen() {
         if (!url) return;
         const audio = new Audio(url);
         audioRef.current = audio;
+        setPreviewState({ cardId, playing: false });
+        audio.addEventListener('play', () => setPreviewState({ cardId, playing: true }));
+        audio.addEventListener('pause', () => setPreviewState((s) => s?.cardId === cardId ? { cardId, playing: false } : s));
+        audio.addEventListener('ended', () => setPreviewState((s) => s?.cardId === cardId ? { cardId, playing: false } : s));
         audio.play().catch(() => {});
       })
       .catch(() => {});
@@ -46,6 +55,15 @@ export default function MultiplayerGameScreen() {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCard?.id]);
+
+  function handleTogglePlay() {
+    if (!audioRef.current) return;
+    if (isPreviewPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(() => {});
+    }
+  }
 
   const [dragging, setDragging] = useState(false);
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
@@ -128,13 +146,6 @@ export default function MultiplayerGameScreen() {
       {/* Top bar */}
       <div className="game-topbar">
         <button className="btn-back" onClick={leaveRoom}>✕</button>
-        <div className="mp-scores">
-          {players.map((p) => (
-            <span key={p.name} className={`mp-score-chip ${p.name === playerName ? 'me' : ''}`}>
-              {p.name} {p.correctCount}/{goal}
-            </span>
-          ))}
-        </div>
       </div>
 
       {/* Current card — hidden while tentative (card lives in the timeline) */}
@@ -158,6 +169,12 @@ export default function MultiplayerGameScreen() {
           >
             <SongCard song={currentCard} revealed={showReveal} />
           </div>
+        )}
+
+        {hasPreview && (
+          <button className="btn-play-pause" onClick={handleTogglePlay} aria-label="Toggle playback">
+            {isPreviewPlaying ? '⏸' : '▶'}
+          </button>
         )}
       </div>
 

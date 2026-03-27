@@ -98,7 +98,11 @@ export default class MusicsterRoom implements Party.Server {
 
     switch (msg.type) {
       case 'join': {
-        if (this.state.players.size === 0) this.state.host = sender.id;
+        const isFirstPlayer = this.state.players.size === 0;
+        if (isFirstPlayer) {
+          this.state.host = sender.id;
+          this.state.goal = msg.goal ?? this.state.goal;
+        }
         this.state.players.set(sender.id, {
           id: sender.id,
           name: msg.playerName,
@@ -107,7 +111,6 @@ export default class MusicsterRoom implements Party.Server {
           hasPlaced: false,
           lastPlacedPosition: null,
         });
-        this.state.goal = msg.goal ?? this.state.goal;
         this.broadcast({ type: 'room_state', ...this.getRoomSnapshot() });
         break;
       }

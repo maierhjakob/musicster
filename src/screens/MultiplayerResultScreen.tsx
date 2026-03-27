@@ -2,7 +2,7 @@ import { useMultiplayer } from '../context/MultiplayerContext';
 import './MultiplayerResultScreen.css';
 
 export default function MultiplayerResultScreen() {
-  const { state, leaveRoom } = useMultiplayer();
+  const { state, playAgain, leaveRoom } = useMultiplayer();
   const { winner, allTimelines, goal } = state;
 
   return (
@@ -51,6 +51,9 @@ export default function MultiplayerResultScreen() {
       </div>
 
       <div className="mp-result-footer">
+        <button className="btn btn-secondary" onClick={playAgain}>
+          Play again
+        </button>
         <button className="btn btn-primary" onClick={leaveRoom}>
           Back to home
         </button>

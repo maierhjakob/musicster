@@ -57,6 +57,12 @@
   border: 2px solid rgba(255,255,255,0.1);
 }
 
+/* Hide back-face content immediately when not revealed so new card data
+   never flashes during the return flip animation */
+.song-card:not(.revealed) .song-card-back {
+  visibility: hidden;
+}
+
 .card-year {
   font-size: 2rem;
   font-weight: 800;

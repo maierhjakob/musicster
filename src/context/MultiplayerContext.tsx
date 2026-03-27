@@ -3,6 +3,7 @@ import PartySocket from 'partysocket';
 import type { Song } from '../data/songs';
 import { useSongs } from './SongsContext';
 
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -51,6 +52,7 @@ type MpAction =
   | { type: 'PLAYER_PLACED'; waiting: string[] }
   | { type: 'REVEAL'; allTimelines: TimelineEntry[] }
   | { type: 'GAME_OVER'; winner: string | null; allTimelines: TimelineEntry[] }
+  | { type: 'PLAY_AGAIN' }
   | { type: 'RESET' };
 
 // ---------------------------------------------------------------------------
@@ -179,6 +181,19 @@ function mpReducer(state: MultiplayerState, action: MpAction): MultiplayerState 
         allTimelines: action.allTimelines,
       };
 
+    case 'PLAY_AGAIN':
+      return {
+        ...state,
+        mode: 'lobby',
+        currentCard: null,
+        myTimeline: [],
+        isTentative: false,
+        myLastResult: null,
+        waiting: [],
+        allTimelines: [],
+        winner: null,
+      };
+
     case 'RESET':
       return initialState;
   }
@@ -196,6 +211,7 @@ interface MultiplayerContextValue {
   setGoal: (goal: number) => void;
   placeCard: (position: number) => void;
   unplaceCard: () => void;
+  playAgain: () => void;
   leaveRoom: () => void;
 }
 
@@ -207,7 +223,9 @@ const MultiplayerContext = createContext<MultiplayerContextValue | null>(null);
 
 export function MultiplayerProvider({ children }: { children: React.ReactNode }) {
   const songs = useSongs();
-  const songById = (id: number): Song | undefined => songs.find((s) => s.id === id);
+  const songsRef = useRef(songs);
+  songsRef.current = songs;
+  const songById = (id: number): Song | undefined => songsRef.current.find((s) => s.id === id);
 
   const [state, dispatch] = useReducer(mpReducer, initialState);
   const socketRef = useRef<PartySocket | null>(null);
@@ -324,6 +342,10 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
     socketRef.current?.send(JSON.stringify({ type: 'unplace_card' }));
   }, []);
 
+  const playAgain = useCallback(() => {
+    dispatch({ type: 'PLAY_AGAIN' });
+  }, []);
+
   const leaveRoom = useCallback(() => {
     socketRef.current?.close();
     socketRef.current = null;
@@ -341,7 +363,7 @@ export function MultiplayerProvider({ children }: { children: React.ReactNode })
   void pendingPlaceRef;
 
   return (
-    <MultiplayerContext.Provider value={{ state, createRoom, joinRoom, startGame, setGoal, placeCard, unplaceCard, leaveRoom }}>
+    <MultiplayerContext.Provider value={{ state, createRoom, joinRoom, startGame, setGoal, placeCard, unplaceCard, playAgain, leaveRoom }}>
       {children}
     </MultiplayerContext.Provider>
   );
