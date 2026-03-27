@@ -12,11 +12,15 @@ export default function HomeScreen() {
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [goal, setGoal] = useState(8);
-  const [genre, setGenre] = useState<Genre | null>(null);
+  const [genres, setGenres] = useState<Genre[]>([]);
+
+  function toggleGenre(g: Genre) {
+    setGenres((prev) => prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]);
+  }
 
   function handleCreate() {
     if (!playerName.trim()) return;
-    createRoom(playerName.trim(), goal, genre);
+    createRoom(playerName.trim(), goal, genres);
   }
 
   function handleJoin() {
@@ -44,14 +48,14 @@ export default function HomeScreen() {
               <>
                 <div className="home-genre-picker">
                   <button
-                    className={`home-genre-btn ${genre === null ? 'active' : ''}`}
-                    onClick={() => setGenre(null)}
+                    className={`home-genre-btn ${genres.length === 0 ? 'active' : ''}`}
+                    onClick={() => setGenres([])}
                   >All</button>
                   {GENRES.map((g) => (
                     <button
                       key={g}
-                      className={`home-genre-btn ${genre === g ? 'active' : ''}`}
-                      onClick={() => setGenre(g)}
+                      className={`home-genre-btn ${genres.includes(g) ? 'active' : ''}`}
+                      onClick={() => toggleGenre(g)}
                     >{g}</button>
                   ))}
                 </div>
@@ -109,20 +113,20 @@ export default function HomeScreen() {
 
         <div className="home-genre-picker">
           <button
-            className={`home-genre-btn ${genre === null ? 'active' : ''}`}
-            onClick={() => setGenre(null)}
+            className={`home-genre-btn ${genres.length === 0 ? 'active' : ''}`}
+            onClick={() => setGenres([])}
           >All</button>
           {GENRES.map((g) => (
             <button
               key={g}
-              className={`home-genre-btn ${genre === g ? 'active' : ''}`}
-              onClick={() => setGenre(g)}
+              className={`home-genre-btn ${genres.includes(g) ? 'active' : ''}`}
+              onClick={() => toggleGenre(g)}
             >{g}</button>
           ))}
         </div>
 
         <div className="home-actions">
-          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME', genre })}>
+          <button className="btn btn-primary" onClick={() => dispatch({ type: 'START_GAME', genres })}>
             Play solo
           </button>
 

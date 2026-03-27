@@ -3,7 +3,14 @@ import { GENRES } from '../data/songs';
 import './LobbyScreen.css';
 
 export default function LobbyScreen() {
-  const { state, startGame, setGoal, setGenre, leaveRoom } = useMultiplayer();
+  const { state, startGame, setGoal, setGenres, leaveRoom } = useMultiplayer();
+
+  function toggleGenre(g: string) {
+    const next = state.genres.includes(g)
+      ? state.genres.filter((x) => x !== g)
+      : [...state.genres, g];
+    setGenres(next);
+  }
   function handleGoalChange(val: string) {
     const n = parseInt(val);
     if (!isNaN(n) && n >= 1 && n <= 30) setGoal(n);
@@ -31,14 +38,14 @@ export default function LobbyScreen() {
           <div className="lobby-settings">
             <div className="lobby-genre-picker">
               <button
-                className={`lobby-genre-btn ${state.genre === null ? 'active' : ''}`}
-                onClick={() => setGenre(null)}
+                className={`lobby-genre-btn ${state.genres.length === 0 ? 'active' : ''}`}
+                onClick={() => setGenres([])}
               >All</button>
               {GENRES.map((g) => (
                 <button
                   key={g}
-                  className={`lobby-genre-btn ${state.genre === g ? 'active' : ''}`}
-                  onClick={() => setGenre(g)}
+                  className={`lobby-genre-btn ${state.genres.includes(g) ? 'active' : ''}`}
+                  onClick={() => toggleGenre(g)}
                 >{g}</button>
               ))}
             </div>
@@ -70,7 +77,7 @@ export default function LobbyScreen() {
         ) : (
           <>
             <p className="lobby-genre-display">
-              Genre: <strong>{state.genre ?? 'All'}</strong>
+              Genre: <strong>{state.genres.length === 0 ? 'All' : state.genres.join(', ')}</strong>
             </p>
             <p className="lobby-waiting">Waiting for the host to start…</p>
           </>

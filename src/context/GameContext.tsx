@@ -23,7 +23,7 @@ type InternalAction =
 
 // Public action surface — callers just dispatch START_GAME with no args
 export type GameAction =
-  | { type: 'START_GAME'; genre?: string | null }
+  | { type: 'START_GAME'; genres?: string[] }
   | { type: 'PLACE_CARD'; position: number }
   | { type: 'NEXT_CARD' }
   | { type: 'GO_HOME' };
@@ -99,7 +99,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const dispatch = useCallback((action: GameAction) => {
     if (action.type === 'START_GAME') {
-      const pool = action.genre ? songs.filter((s) => s.genre === action.genre) : songs;
+      const pool = action.genres?.length ? songs.filter((s) => action.genres!.includes(s.genre)) : songs;
       internalDispatch({ type: '_START', deck: shuffle(pool) });
     } else {
       internalDispatch(action);
